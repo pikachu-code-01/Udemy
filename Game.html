@@ -1,0 +1,41 @@
+<html>
+<h1>Tennis Game</h1>
+<p>Hi this is a new game from getting knowledge the udemy course</p>
+<canvas id ='gameContent' width ='800' height = '600'></canvas>
+<Script>
+    var canvas;
+    var canvasContext;
+    var recX = 50
+    window.onload = function()
+    {
+           canvas = document.getElementById('gameContent');
+         canvasContext =canvas.getContext('2d');
+         var framesPerSecond = 30;
+       setInterval(function()
+       {
+        move();
+        drawEveryThing();
+       },1000/framesPerSecond);
+       
+    }
+    function move()
+    {
+   recX += 5;
+    }
+    function drawEveryThing()
+    {
+     
+        console.log(recX);
+canvasContext.fillStyle ='black';
+canvasContext.fillRect(0,0,canvas.width,canvas.height);
+canvasContext.fillStyle ='white';
+canvasContext.fillRect(300,200,200,200);
+
+canvasContext.fillStyle ='red';
+canvasContext.fillRect(canvas.width/3,canvas.height/3,200,200);
+canvasContext.fillStyle ='green';
+canvasContext.fillRect(recX,10,10,10);
+    }
+</script>
+
+</html>
