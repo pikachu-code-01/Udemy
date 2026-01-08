@@ -5,12 +5,12 @@
 <script>
     var canvas;
     var canvasContext;
-    var ballX = 50;
-    var ballY = 50;
-    var ballSpeedY = 4;
-    var ballSpeedX = 10;
-    var socreOFPlayer1 =0;
-    var socreOFPlayer2 =0;
+    let ballX = 50;
+    let ballY = 50;
+    let ballSpeedY = 4;
+    let ballSpeedX = 10;
+    let socreOFPlayer1 =0;
+    let socreOFPlayer2 =0;
     
 
     var paddle1Y = 250;
@@ -18,7 +18,7 @@
     const PADDLE_THICKNESS = 10;
     var paddle2Y = 250;
     const WINNING_SCORE = 3;
-    var showWinning_Score = false;
+    let showWinning_Score = false;
 
     // for mouse detection  
     function calculateMousePos(evt)
@@ -83,9 +83,9 @@ var speedX =10;
 var speedY =4;
 // apply the angle to the same speed in x direction
 
-ballSpeedY = speedX* dirY;
+ballSpeedX = speedX* dirX;
 // apply the angle to the same speed in y direction
-ballSpeedX = speedY* dirX;
+ballSpeedY = speedY* dirY;
 
     }
     // for the movement of the ai paddle
@@ -113,7 +113,8 @@ ballSpeedX = speedY* dirX;
    ballY +=ballSpeedY;
    // to bounce while reach the end of the box
    if(ballX > canvas.width)
-   { // the ball hit the paddle
+   { 
+    // the ball hit the paddle
     if(ballY >paddle2Y && ballY <PADDLE_HEIGHT + paddle2Y)
    {
  ballSpeedX = -ballSpeedX;
@@ -130,7 +131,9 @@ ballSpeedX = speedY* dirX;
   }
    }
     if(ballX < 0 )
-   { // the ball hit the paddle
+
+   { 
+    // the ball hit the paddle
     if(ballY > paddle1Y && ballY < paddle1Y+ PADDLE_HEIGHT){
       ballSpeedX = -ballSpeedX;
       // after movement of the ball in different direction on hitting the paddle
@@ -152,7 +155,8 @@ ballSpeedX = speedY* dirX;
    }
    // the ball to bounce from the bottom
     if(ballY < 0 )
-   {// maintain the same speed
+   {
+    // maintain the same speed
     ballSpeedY = -ballSpeedY;
    }
     }
