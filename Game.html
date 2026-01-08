@@ -2,59 +2,217 @@
 <h1>Tennis Game</h1>
 <p>Hi this is a new game from getting knowledge the udemy course</p>
 <canvas id ='gameContent' width ='800' height = '600'></canvas>
-<Script>
+<script>
     var canvas;
     var canvasContext;
-    var ballX = 50
+    var ballX = 50;
+    var ballY = 50;
+    var ballSpeedY = 4;
     var ballSpeedX = 10;
+    var socreOFPlayer1 =0;
+    var socreOFPlayer2 =0;
+    
+
+    var paddle1Y = 250;
+    const PADDLE_HEIGHT = 100;
+    const PADDLE_THICKNESS = 10;
+    var paddle2Y = 250;
+    const WINNING_SCORE = 3;
+    var showWinning_Score = false;
+
+    // for mouse detection  
+    function calculateMousePos(evt)
+    {
+      var rect = canvas.getBoundingClientRect();
+      var root = document.documentElement;
+      var mouseX = evt.clientX - rect.left - root.scrollLeft;
+      var mouseY = evt.clientY - rect.top -root.scrollTop;
+      return {
+        x:mouseX,
+        y:mouseY
+      };
+    }
+    // the reseting thing after the click to continue
+    function paddlemovement(evt){
+      if(showWinning_Score){
+      socreOFPlayer1 = 0;
+      socreOFPlayer2 =0;
+      showWinning_Score = false;
+      }
+
+    }
+    // Windows loading 
     window.onload = function()
     {
            canvas = document.getElementById('gameContent');
          canvasContext =canvas.getContext('2d');
-         var framesPerSecond = 30;
-       setInterval(function()
+         var framesPerSecond = 30;// 30FPS
+     // time control for all thing in 30 FPS
+         setInterval(function()
        {  
         move();
         drawEveryThing();
        },1000/framesPerSecond);
+       // the click to continue process
+       canvas.addEventListener('mousedown',paddlemovement);
+       // the mouse to paddle connection
+       canvas.addEventListener('mousemove',function(evt){
+        var mousePos = calculateMousePos(evt);
+        
+        paddle1Y = mousePos.y -PADDLE_HEIGHT /2; // the mouse to paddle in the middle point
+       });
        
     }
+     // to reset the game
+    function ballReset(){
+      // RESETING THE SCORE 
+      if(socreOFPlayer1 >= WINNING_SCORE || socreOFPlayer2 >= WINNING_SCORE)
+    {
+      
+      showWinning_Score =true;
+    }
+// from the mid to come the ball after reset in x direction
+ballX = canvas.width /2;
+// from the mid to come the ball after reset in y direction
+ballY = canvas.height /2;
+// creates the random angle in x direction
+var dirX = Math.random() > 0.5? 1: -1;
+// creates the random angle in y direction
+var dirY = Math.random() > 0.5 ? 1:-1;
+var speedX =10;
+var speedY =4;
+// apply the angle to the same speed in x direction
+
+ballSpeedY = speedX* dirY;
+// apply the angle to the same speed in y direction
+ballSpeedX = speedY* dirX;
+
+    }
+    // for the movement of the ai paddle
+    function computerMovement(){
+      var paddle2YCenter = paddle2Y + (PADDLE_HEIGHT/2);
+      if(paddle2YCenter < ballY  - 40){
+        paddle2Y+= 6;
+      }
+      else if(paddle2YCenter > ballY +40) {
+        paddle2Y-=6;
+      }
+    }
+
+    // to control the movement of the all objects
     function move()
     {
-   ballX  = ballX + ballSpeedX;
+      if(showWinning_Score){
+        return;
+      }
+      // to the Ai for the oponent
+      computerMovement();
+      // to movement of the ball in x direction
+   ballX  += ballSpeedX;
+   // to movement of the ball in y direction
+   ballY +=ballSpeedY;
+   // to bounce while reach the end of the box
    if(ballX > canvas.width)
+   { // the ball hit the paddle
+    if(ballY >paddle2Y && ballY <PADDLE_HEIGHT + paddle2Y)
    {
-    ballSpeedX = -ballSpeedX;
+ ballSpeedX = -ballSpeedX;
+ //after movement of the ball in different direction on hitting the paddle
+  var deltaY = ballY -(paddle2Y +PADDLE_HEIGHT / 2);
+      ballSpeedY = deltaY * 0.35;
+   }
+  else {
+   
+    // oponent gain the score
+    socreOFPlayer1 ++;
+     // if the ball not hit the paddle
+    ballReset();
+  }
    }
     if(ballX < 0 )
+   { // the ball hit the paddle
+    if(ballY > paddle1Y && ballY < paddle1Y+ PADDLE_HEIGHT){
+      ballSpeedX = -ballSpeedX;
+      // after movement of the ball in different direction on hitting the paddle
+      var deltaY = ballY -(paddle1Y +PADDLE_HEIGHT / 2);
+      ballSpeedY = deltaY * 0.35;
+    }
+    else{ 
+    // oponent gain the score
+    socreOFPlayer2 ++;
+    // if the ball not hit the paddle
+    ballReset();
+    }
+
+   } // the ball to bounce in the top
+    if(ballY > canvas.height)
    {
-    ballSpeedX = -ballSpeedX;
+    // maintain the same speed
+    ballSpeedY = -ballSpeedY;
+   }
+   // the ball to bounce from the bottom
+    if(ballY < 0 )
+   {// maintain the same speed
+    ballSpeedY = -ballSpeedY;
    }
     }
-    function colorRect(leftX,topY,width,height,drawcolor)
+
+    // the color and shape for rectangle
+    function colorRect(leftX,topY,width,height,drawcolor)// arguments
     {
-      canvasContext.fillStyle = drawcolor;
-      canvasContext.fillRect(leftX,topY,width,height); 
+      canvasContext.fillStyle = drawcolor;// color
+      canvasContext.fillRect(leftX,topY,width,height); // shape
     }
+    // the ball to color and shape
     function colorBall(X,Y,rad,col)
     {
 
 canvasContext.fillStyle = col;
+// start
 canvasContext.beginPath();
 canvasContext.arc(X,Y
-,rad,Math.PI*2,0,false);
+,rad,0,Math.PI*2,false);
+// end
 canvasContext.fill();
     }
+    // draw the line 
+    function net(){
+      for(i =0;i<canvas.height;i+=40){
+       colorRect(canvas.width /2 -1,i,2,20,'white');
+      }
+    }
+    // general draw for all shapes
     function drawEveryThing()
     {
+      if(showWinning_Score)
+    {
+    
+      canvasContext.fillStyle = 'white';
+      if(socreOFPlayer1 >= WINNING_SCORE){
+       canvasContext.fillText("Player 1 Won",canvas.width /4,canvas.height /4);         //800/4 = 200
+      }
+     else if(socreOFPlayer2 >= WINNING_SCORE){
+        canvasContext.fillText("Programe Won",canvas.width /1.5,canvas.height /4);       // 800
+      }
+      canvasContext.fillText("Click to continue",canvas.width /2 + 6,canvas.height /2);
+      return;
+
+    }
       // the next line for Black Window
 colorRect(0,0,canvas.width,canvas.height,'black');
+net();
 // the next line for left box
-colorRect(1,240,20,100,'white');
+colorRect(0,paddle1Y,PADDLE_THICKNESS,PADDLE_HEIGHT,'white');
 // the next line for Ball
-colorBall(ballX,100,5,'red');
+colorBall(ballX,ballY,10,'red');
 // the next line for right box
-colorRect(779,240,20,100,'white')
+colorRect(canvas.width -PADDLE_THICKNESS,paddle2Y,10,PADDLE_HEIGHT,'white')
+// to show the score for player 1 in x,y direction
+canvasContext.fillText(socreOFPlayer1,100,300);
+// to show the score for player 1 in x,y direction
+canvasContext.fillText(socreOFPlayer2,canvas.width -100,300);
+
+
 }
 </script>
 
