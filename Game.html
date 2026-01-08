@@ -5,14 +5,15 @@
 <Script>
     var canvas;
     var canvasContext;
-    var recX = 50
+    var ballX = 50
+    var ballSpeedX = 10;
     window.onload = function()
     {
            canvas = document.getElementById('gameContent');
          canvasContext =canvas.getContext('2d');
          var framesPerSecond = 30;
        setInterval(function()
-       {
+       {  
         move();
         drawEveryThing();
        },1000/framesPerSecond);
@@ -20,22 +21,41 @@
     }
     function move()
     {
-   recX += 5;
+   ballX  = ballX + ballSpeedX;
+   if(ballX > canvas.width)
+   {
+    ballSpeedX = -ballSpeedX;
+   }
+    if(ballX < 0 )
+   {
+    ballSpeedX = -ballSpeedX;
+   }
+    }
+    function colorRect(leftX,topY,width,height,drawcolor)
+    {
+      canvasContext.fillStyle = drawcolor;
+      canvasContext.fillRect(leftX,topY,width,height); 
+    }
+    function colorBall(X,Y,rad,col)
+    {
+
+canvasContext.fillStyle = col;
+canvasContext.beginPath();
+canvasContext.arc(X,Y
+,rad,Math.PI*2,0,false);
+canvasContext.fill();
     }
     function drawEveryThing()
     {
-     
-        console.log(recX);
-canvasContext.fillStyle ='black';
-canvasContext.fillRect(0,0,canvas.width,canvas.height);
-canvasContext.fillStyle ='white';
-canvasContext.fillRect(300,200,200,200);
-
-canvasContext.fillStyle ='red';
-canvasContext.fillRect(canvas.width/3,canvas.height/3,200,200);
-canvasContext.fillStyle ='green';
-canvasContext.fillRect(recX,10,10,10);
-    }
+      // the next line for Black Window
+colorRect(0,0,canvas.width,canvas.height,'black');
+// the next line for left box
+colorRect(1,240,20,100,'white');
+// the next line for Ball
+colorBall(ballX,100,5,'red');
+// the next line for right box
+colorRect(779,240,20,100,'white')
+}
 </script>
 
 </html>
